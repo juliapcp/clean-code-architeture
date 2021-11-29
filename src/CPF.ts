@@ -1,64 +1,44 @@
-function validate(str) {
 
-	if (str !== null) {
-        if (str !== undefined) {
-            if (str.length >= 11 || str.length <= 14){
+export default class CPF {
+    sCPF = '';
+    constructor(sCPF: string) {
+        this.sCPF = sCPF;
+    }
+    removeMascara(): void {
+        this.sCPF = this.sCPF
+            .split('.').join('')
+            .split('-').join('')
+            .split(' ').join('');
+    }
+    isTamanhoInvalido(): boolean {
+        return (this.sCPF.length < 11 || this.sCPF.length > 14);
+    }
+    isNumerosIguais(): boolean {
+        return this.sCPF.split("").every(sNumero => sNumero === this.sCPF[0])
+    }
+    calculaDigitoVerificador(sParteCPF: string): string {
+        let nAcumulador: number = 0
+        let nMultiplicador = sParteCPF.length + 1
+        for (let ind = 0; ind < sParteCPF.length ; ind++) {
+            let digito = parseInt(sParteCPF.substring(ind, ind + 1));
+            nAcumulador += (nMultiplicador * digito)
+            nMultiplicador--
+        };
+        let resto = nAcumulador % 11
+        return (resto < 2) ? '0' : (11 - resto).toString();
+    }
+    getDigitoVerificadorAtual(): string {
+        return this.sCPF.substring(this.sCPF.length - 2, this.sCPF.length);
+    }
 
-                str=str
-                    .replace('.','')
-                    .replace('.','')
-                    .replace('-','')
-                    .replace(" ","");  
-    
-                if (!str.split("").every(c => c === str[0])) {
-                    try{  
-                        let     d1, d2;  
-                        let     dg1, dg2, rest;  
-                        let     digito;  
-                            let     nDigResult;  
-                        d1 = d2 = 0;  
-                        dg1 = dg2 = rest = 0;  
-                            
-                        for (let nCount = 1; nCount < str.length -1; nCount++) {  
-                            // if (isNaN(parseInt(str.substring(nCount -1, nCount)))) {
-                            // 	return false;
-                            // } else {
-    
-                                digito = parseInt(str.substring(nCount -1, nCount));  							
-                                d1 = d1 + ( 11 - nCount ) * digito;  
-                
-                                d2 = d2 + ( 12 - nCount ) * digito;  
-                            // }
-                        };  
-                            
-                        rest = (d1 % 11);  
-                
-                        dg1 = (rest < 2) ? dg1 = 0 : 11 - rest;  
-                        d2 += 2 * dg1;  
-                        rest = (d2 % 11);  
-                        if (rest < 2)  
-                            dg2 = 0;  
-                        else  
-                            dg2 = 11 - rest;  
-                
-                            let nDigVerific = str.substring(str.length-2, str.length);  
-                        nDigResult = "" + dg1 + "" + dg2;  
-                        return nDigVerific == nDigResult;
-                    }catch (e){  
-                        console.error("Erro !"+e);  
-    
-                        return false;  
-                    }  
-                } else return false
-    
-            }else return false;
-        }
-
-
-	} else return false;
-
+    isValido(): boolean {
+        if (this.sCPF == null || undefined) return false;
+        if (this.isTamanhoInvalido()) return false;
+        this.removeMascara();
+        if (this.isNumerosIguais()) return false;
+        let noveDigitosCPF = this.sCPF.substring(0, 9);
+        let primeiroDV = this.calculaDigitoVerificador(noveDigitosCPF);
+        let segundoDV = this.calculaDigitoVerificador(noveDigitosCPF.concat(primeiroDV));
+        return this.getDigitoVerificadorAtual() === primeiroDV.concat(segundoDV);
+    }
 }
-
-console.log(validate("111.111.111-11"));
-console.log(validate("123.456.789-99"));
-console.log(validate("935.411.347-80"));
