@@ -24,3 +24,17 @@ test("Deve retornar verdadeiro", function () {
 test("Deve retornar falso, é um CNPJ", function () {
     expect(new CPF("60409075000152").isValido()).toBeFalsy();
 });
+
+test("Deve retornar verdadeiro",  function () {
+    expect(new CPF("987.654.321-00").isValido()).toBeTruthy();
+});
+test("Deve retornar falso",  function () {
+    expect(new CPF("987a654b321c00").isValido()).toBeFalsy();
+});
+
+test("Deve retornar falso",  function () {
+    expect(new CPF("AAAAAAAAAAA").isValido()).toBeFalsy();
+});
+test("Deve retornar falso",  function () {
+    expect(new CPF("123456").isValido()).toBeFalsy();
+});
