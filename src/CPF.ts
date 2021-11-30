@@ -13,16 +13,16 @@ export default class CPF {
         let segundoDV = this.calculaDigitoVerificador(noveDigitosCPF.concat(primeiroDV));
         return this.getDigitoVerificadorAtual() === primeiroDV.concat(segundoDV);
     }
-    removeMascara(): void {
+    private removeMascara(): void {
         this.sCPF = this.sCPF.replace(/[\.\-]*/g, "");
     }
-    isTamanhoInvalido(): boolean {
+    private isTamanhoInvalido(): boolean {
         return (this.sCPF.length < 11);
     }
-    isNumerosIguais(): boolean {
+    private isNumerosIguais(): boolean {
         return this.sCPF.split("").every(sNumero => sNumero === this.sCPF[0])
     }
-    calculaDigitoVerificador(sParteCPF: string): string {
+    private calculaDigitoVerificador(sParteCPF: string): string {
         let nAcumulador: number = 0
         let nMultiplicador = sParteCPF.length + 1
         for (let ind = 0; ind < sParteCPF.length ; ind++) {
@@ -33,7 +33,7 @@ export default class CPF {
         let resto = nAcumulador % 11
         return (resto < 2) ? '0' : (11 - resto).toString();
     }
-    getDigitoVerificadorAtual(): string {
+    private getDigitoVerificadorAtual(): string {
         return this.sCPF.slice(9);
     }
 
